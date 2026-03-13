@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "ข้าวผัด",
+      "price": 45.0,
+      "item_type": "food",
+      "description": null,
+      "image": "fried-rice.png"
+    },
+    {
+      "id": 2,
+      "name": "ผัดไทย",
+      "price": 50.0,
+      "item_type": "food",
+      "description": null,
+      "image": "pad-thai.png"
+    },
+    {
+      "id": 3,
+      "name": "ส้มตำ",
+      "price": 55.0,
+      "item_type": "food",
+      "description": null,
+      "image": "som-tam.png"
+    },
+    {
+      "id": 4,
+      "name": "น้ำอัดลม",
+      "price": 15.0,
+      "item_type": "drink",
+      "description": null,
+      "image": "cola.png"
+    },
+    {
+      "id": 5,
+      "name": "น้ำเปล่า",
+      "price": 10.0,
+      "item_type": "drink",
+      "description": null,
+      "image": "water.png"
+    },
+    {
+      "id": 6,
+      "name": "ชาเย็น",
+      "price": 25.0,
+      "item_type": "drink",
+      "description": null,
+      "image": "thai-tea.png"
+    }
+  ],
+  "next_id": 7
+}

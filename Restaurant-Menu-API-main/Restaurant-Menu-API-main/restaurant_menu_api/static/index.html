@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍜 ร้านอาหาร - Restaurant Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm-cream: #FFF8E7;
+            --terracotta: #C45C3E;
+            --deep-green: #2D5A27;
+            --gold: #D4A574;
+            --dark: #2C2416;
+            --soft-shadow: 0 4px 20px rgba(44, 36, 22, 0.08);
+            --card-hover: 0 8px 30px rgba(196, 92, 62, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, var(--warm-cream) 0%, #FFEFD5 50%, #FFF5E6 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--deep-green), #3d7a35);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--soft-shadow);
+        }
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        header p {
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .tab {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: white;
+            color: var(--dark);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: var(--soft-shadow);
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+        .tab.active {
+            background: var(--terracotta);
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--soft-shadow);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-hover);
+        }
+        .menu-card.selected {
+            outline: 3px solid var(--terracotta);
+            outline-offset: 2px;
+        }
+
+        .menu-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .menu-card .no-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--gold), #e8c9a0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .menu-card .info {
+            padding: 1.2rem;
+        }
+        .menu-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .menu-card .price {
+            color: var(--terracotta);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .menu-card .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        .menu-card .badge.food {
+            background: #e8f5e9;
+            color: var(--deep-green);
+        }
+        .menu-card .badge.drink {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .cart-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--soft-shadow);
+            margin-top: 2rem;
+            position: sticky;
+            top: 1rem;
+        }
+        .cart-panel h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cart-item button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: var(--terracotta);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .cart-item button:hover {
+            background: var(--deep-green);
+        }
+        .cart-empty {
+            color: #999;
+            padding: 2rem;
+            text-align: center;
+        }
+        .cart-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--terracotta);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: none;
+            background: var(--terracotta);
+            color: white;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover {
+            background: var(--deep-green);
+        }
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .order-form input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .order-form input:focus {
+            outline: none;
+            border-color: var(--terracotta);
+        }
+
+        .layout-with-cart {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2rem;
+        }
+        @media (max-width: 900px) {
+            .layout-with-cart {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .orders-list .order-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--soft-shadow);
+        }
+        .orders-list .order-card h4 {
+            color: var(--terracotta);
+            margin-bottom: 0.5rem;
+        }
+        .orders-list .order-card .meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--deep-green);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-hover);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🍜 ร้านอาหารไทย</h1>
+        <p>เลือกเมนูที่ชอบ แล้วสั่งซื้อได้ทันที</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="menu">📋 เมนู</button>
+            <button class="tab" data-tab="orders">📦 คำสั่งซื้อ</button>
+        </div>
+
+        <div id="menu-section" class="section active">
+            <div class="layout-with-cart">
+                <div>
+                    <h2 style="margin-bottom: 1rem;">รายการเมนู</h2>
+                    <div id="menu-grid" class="menu-grid">
+                        <div class="loading">กำลังโหลด...</div>
+                    </div>
+                </div>
+                <div class="cart-panel">
+                    <h3>🛒 ตะกร้าสินค้า</h3>
+                    <div class="order-form">
+                        <input type="number" id="table-number" placeholder="หมายเลขโต๊ะ" min="1">
+                    </div>
+                    <div id="cart-items"></div>
+                    <div id="cart-total" class="cart-total" style="display: none;"></div>
+                    <button class="btn-submit" id="btn-order" disabled>สั่งอาหาร</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="orders-section" class="section">
+            <h2 style="margin-bottom: 1rem;">คำสั่งซื้อทั้งหมด</h2>
+            <div id="orders-list" class="orders-list">
+                <div class="loading">กำลังโหลด...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const API = '';
+        let menu = [];
+        let cart = {};
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + '-section').classList.add('active');
+                if (tab.dataset.tab === 'orders') loadOrders();
+            });
+        });
+
+        async function loadMenu() {
+            try {
+                const res = await fetch(API + '/menu');
+                menu = await res.json();
+                renderMenu();
+            } catch (e) {
+                document.getElementById('menu-grid').innerHTML = '<p style="color:red">โหลดเมนูไม่สำเร็จ</p>';
+            }
+        }
+
+        function renderMenu() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = menu.map(item => `
+                <div class="menu-card ${cart[item.id] ? 'selected' : ''}" data-id="${item.id}">
+                    ${item.image 
+                        ? `<img src="/static/images/${item.image}" alt="${item.name}">` 
+                        : `<div class="no-image">🍽️</div>`}
+                    <div class="info">
+                        <h3>${item.name}</h3>
+                        <span class="price">฿${item.price.toFixed(2)}</span>
+                        <span class="badge ${item.item_type}">${item.item_type === 'food' ? 'อาหาร' : 'เครื่องดื่ม'}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            grid.querySelectorAll('.menu-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = parseInt(card.dataset.id);
+                    cart[id] = (cart[id] || 0) + 1;
+                    renderMenu();
+                    renderCart();
+                });
+            });
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const ids = Object.keys(cart).map(Number).filter(id => cart[id] > 0);
+
+            if (ids.length === 0) {
+                container.innerHTML = '<div class="cart-empty">ยังไม่มีรายการ</div>';
+                document.getElementById('cart-total').style.display = 'none';
+                document.getElementById('btn-order').disabled = true;
+                return;
+            }
+
+            const items = ids.map(id => {
+                const item = menu.find(m => m.id === id);
+                return item ? { ...item, qty: cart[id] } : null;
+            }).filter(Boolean);
+
+            container.innerHTML = items.map(item => `
+                <div class="cart-item">
+                    <span>${item.name} × ${item.qty}</span>
+                    <div class="qty-control">
+                        <button onclick="changeQty(${item.id}, -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+            document.getElementById('cart-total').style.display = 'block';
+            document.getElementById('cart-total').textContent = `รวม: ฿${total.toFixed(2)}`;
+            document.getElementById('btn-order').disabled = false;
+        }
+
+        function changeQty(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
+            if (cart[id] <= 0) delete cart[id];
+            renderMenu();
+            renderCart();
+        }
+
+        document.getElementById('btn-order').addEventListener('click', async () => {
+            const tableNum = parseInt(document.getElementById('table-number').value);
+            if (!tableNum || tableNum < 1) {
+                showToast('กรุณาใส่หมายเลขโต๊ะ');
+                return;
+            }
+
+            const items = Object.entries(cart)
+                .filter(([_, qty]) => qty > 0)
+                .map(([id, qty]) => ({ menu_item_id: parseInt(id), quantity: qty }));
+
+            if (items.length === 0) {
+                showToast('กรุณาเลือกเมนู');
+                return;
+            }
+
+            try {
+                const res = await fetch(API + '/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ table_number: tableNum, items })
+                });
+                if (res.ok) {
+                    cart = {};
+                    renderMenu();
+                    renderCart();
+                    showToast('สั่งอาหารสำเร็จ!');
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || 'เกิดข้อผิดพลาด');
+                }
+            } catch (e) {
+                showToast('ไม่สามารถเชื่อมต่อ API ได้');
+            }
+        });
+
+        async function loadOrders() {
+            const container = document.getElementById('orders-list');
+            try {
+                const res = await fetch(API + '/orders');
+                const orders = await res.json();
+                if (orders.length === 0) {
+                    container.innerHTML = '<p style="color:#666">ยังไม่มีคำสั่งซื้อ</p>';
+                } else {
+                    container.innerHTML = orders.map(o => `
+                        <div class="order-card">
+                            <h4>โต๊ะที่ ${o.table_number} #${o.id}</h4>
+                            <div class="meta">${new Date(o.created_at).toLocaleString('th-TH')} | สถานะ: ${o.status}</div>
+                            <p>${o.items.map(i => `${i.quantity} รายการ`).join(', ')}</p>
+                            <p><strong>รวม ฿${o.total_amount.toFixed(2)}</strong></p>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                container.innerHTML = '<p style="color:red">โหลดคำสั่งไม่สำเร็จ</p>';
+            }
+        }
+
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        loadMenu();
+    </script>
+</body>
+</html>
